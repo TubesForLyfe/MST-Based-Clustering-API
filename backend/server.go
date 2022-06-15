@@ -312,7 +312,27 @@ func CreateCluster(res http.ResponseWriter, req *http.Request) {
 }
 
 func GetClusterLog(res http.ResponseWriter, req *http.Request) {
+	setupResponse(&res, req)
+	all_cluster := []map[string]interface{}{}
+	db := openDatabase()
+	db_result, _ := db.Query("SELECT * FROM cluster_log ORDER BY datetime DESC")
+	for db_result.Next() {
+		var datetime, filename, cluster string
+		var cluster_amount int
+		
+		cluster_result := [][]map[string]int{}
+		db_result.Scan(&datetime, &filename, &cluster_amount, &cluster)
+		json.Unmarshal([]byte(cluster), &cluster_result)
 
+		cluster_log := make(map[string]interface{})
+		cluster_log["datetime"] = datetime
+		cluster_log["filename"] = filename
+		cluster_log["cluster_amount"] = cluster_amount
+		cluster_log["cluster_result"] = cluster_result
+		all_cluster = append(all_cluster, cluster_log)
+	}
+	response, _ := json.Marshal(all_cluster)
+	res.Write(response)
 }
 
 func main() {
