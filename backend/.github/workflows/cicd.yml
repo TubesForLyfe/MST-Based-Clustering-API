@@ -7,8 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Unit Tests
-        run: cd backend
-            go test
+        run: go test
 
   deploy:
     runs-on: ubuntu-latest
