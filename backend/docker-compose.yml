@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    build:
+      context: ./docker_db
+    environment:
+      MYSQL_ROOT_PASSWORD: cluster
+      MYSQL_DATABASE: cluster_db
+      MYSQL_USER: cluster
+      MYSQL_PASSWORD: cluster
+    container_name: MST-Based-Clustering-DB
+    ports:
+      - "3306:3306"
+    tty: true
+  app:
+    build:
+      context: .
+    volumes:
+      - "./:/go"
+    container_name: MST-Based-Clustering-API
+    ports:
+      - "3001:3001"
+    env_file: 
+      - .env
+    tty: true
+    depends_on:
+      - db
